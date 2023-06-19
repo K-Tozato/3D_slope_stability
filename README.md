@@ -39,7 +39,6 @@ Hovland法では，土柱側面に働く力をゼロとして仮定して安全�
 \sum_i \sum_j ( \mathbf{r}_b\times\mathbf{T}_{ij} + \mathbf{r}_b\times\mathbf{N}_{ij} + \mathbf{r}_g\times\mathbf{W}_{ij} )\cdot \mathbf{v} = 0  
 ```
 
-
 $\\mathbf{u}$：すべり方向を表現する単位ベクトル  
 $\\mathbf{w}$：地表面に垂直で地中方向を向く単位ベクトル  
 $\mathbf{v}$：$`\mathbf{v}=\mathbf{u}\times\mathbf{w}`$で求められる方向（単位ベクトル）  
@@ -52,7 +51,7 @@ $`\mathbf{r}_b, \mathbf{r}_g`$：楕円体の回転中心から土柱底面中�
 F= \frac{\sum_i\sum_j (\mathbf{t}_{ij}\times\mathbf{r}_b)\cdot\mathbf{v} [cA - \{W_{ij}(\mathbf{g}\cdot\mathbf{n}_{ij}) + u_{ij}A)\}\tan\phi]}{\sum_i\sum_j W_{ij}\{ -(\mathbf{g}\cdot\mathbf{n}_{ij})(\mathbf{r}_b\times\mathbf{n}_{ij})\cdot\mathbf{v}+(\mathbf{r}_g\times\mathbf{g})\cdot\mathbf{v} \}}
 ```
 
-
+<img src="./imgs/ellipsoid.png" width="40%">
 
 ## 解析コードの説明
 
@@ -138,6 +137,7 @@ F= \frac{\sum_i\sum_j (\mathbf{t}_{ij}\times\mathbf{r}_b)\cdot\mathbf{v} [cA - \
 | xxn (yyn) | nx-1 (ny-1)   | [m]   | x,y方向の要素中心の座標                  |   
 | gl        | (nx-1)×(ny-1) | [m]   | 要素中心の標高値の行列                   |   
 
+<img src="./imgs/coordinate.png" width="60%">
 
 - 入力パラメータに関する変数
 ここでは，パラメータは空間的に一様を仮定   
