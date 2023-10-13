@@ -352,7 +352,7 @@ end do
 
 ff = 0.d0 ; zvp = 0.d0
 do k = 1,n0
-  if(ll>1 .or. n0<20) exit
+  if(ll>1 .or. n0<10) exit
   i = nep(k,1) ; j = nep(k,2)
   xp = 0.d0 ; yp = 0.d0 ; zp = 0.d0
   do l = 1, 4
@@ -417,7 +417,6 @@ do k = 1,n0
     ff(2) = ff(2) + wij*dot_product(tij,gv)
   end if
   if(l==2) then
-    wij = wij - uij * area * (-1.d0*dot_product(nij,gv))
     rb(1) = xx(i) ; rb(2) = yy(j) ; rb(3) = gl(i,j) - zvp(k)
     rb(:) = rb(:) - ctr(:)
     rg(1) = xx(i) ; rg(2) = yy(j) ; rg(3) = gl(i,j) - 0.5 * zvp(k)
@@ -427,7 +426,9 @@ do k = 1,n0
     ee(2) = tij(3)*rb(1) - tij(1)*rb(3)
     ee(3) = tij(1)*rb(2) - tij(2)*rb(1)
     a = dot_product(ee,vv(n,:))
-    ff(1) = ff(1) + a * (c * area + (wij*(-1.d0*dot_product(nij,gv))*dtan(phi)))
+    ff(1) = ff(1) + a * (c * area + (wij*(-1.d0*dot_product(nij,gv)) - uij*area)*dtan(phi))
+    !ff(1) = ff(1) + a * (c * area + (wij*(-1.d0*dot_product(nij,gv)) &
+    !        - uij*area*(dot_product(nij,gv)**2.d0))*dtan(phi))
 
     ee(1) = rb(2)*nij(3) - rb(3)*nij(2)
     ee(2) = rb(3)*nij(1) - rb(1)*nij(3)
@@ -437,7 +438,6 @@ do k = 1,n0
     ee(2) = rg(3)*gv(1) - rg(1)*gv(3)
     ee(3) = rg(1)*gv(2) - rg(2)*gv(1)
     b =  dot_product(ee,vv(n,:))
-    !wij = wij + uij * area * (-1.d0*dot_product(nij,gv))
     ff(2) = ff(2) - wij*(a*(-1.d0)*dot_product(nij,gv) + b)
   end if
 
