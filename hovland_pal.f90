@@ -7,7 +7,8 @@ module coord
 end module
 
 module inp_data
-  double precision :: gd, gs, pd, ps, cd, cs
+  double precision, allocatable :: gd(:,:), gs(:,:), pd(:,:) 
+  double precision, allocatable :: ps(:,:), cd(:,:), cs(:,:)
   double precision :: sra(2)
 end module
 
@@ -81,6 +82,8 @@ close(11)
 allocate(xx(nx-1),yy(ny-1),gl(nx-1,ny-1))
 allocate(xxn(nx),yyn(ny),gln(nx,ny))
 allocate(fs(nx-1,ny-1),zz(nx-1,ny-1),zvol(nx-1,ny-1))
+allocate(cd(nx-1,ny-1), pd(nx-1,ny-1), gd(nx-1,ny-1)) 
+allocate(cs(nx-1,ny-1), ps(nx-1,ny-1), gs(nx-1,ny-1))
 
 fs(:,:) = 10.d0 ; zvol(:,:) = 0.d0
 
@@ -99,18 +102,17 @@ close(11)
 dx = xxn(2) - xxn(1)
 dy = yyn(2) - yyn(1)
 
+open(11,file='./input/parameter_slope.txt',status='old')
 do j = 1,ny-1
   do i = 1, nx-1
     xx(i)   = 0.50d0 * (xxn(i+1) + xxn(i))
     yy(j)   = 0.50d0 * (yyn(j+1) + yyn(j))
-    gl(i,j) = 0.25d0 * (gln(i,j) + gln(i+1,j) + gln(i,j+1) + gln(i+1,j+1))
+    gl(i,j) = 0.25d0 * (gln(i,j) + gln(i+1,j) + gln(i,j+1) + gln(i+1,j+1))  
+    read(11,*) cd(i,j), pd(i,j), gd(i,j), cs(i,j), ps(i,j), gs(i,j)
   end do
 end do
-
-open(11,file='./input/parameter.dat',status='old')
-read(11,*) cd, pd, gd, cs, ps, gs
 close(11)
-ps = ps/180.d0*pi ; pd = pd/180.d0*pi
+ps(:,:) = ps(:,:)/180.d0*pi ; pd(:,:) = pd(:,:)/180.d0*pi
 
 open(11,file='./input/infsupdip.dat',status='old')
 read(11,*) sra(1), sra(2)
@@ -372,14 +374,14 @@ do k = 1,n0
   val = zvp(k) * dx * dy
 
   if(zz(i,j) .ge. zvp(k)) then
-    wij = gs * val
+    wij = gs(i,j) * val
     uij = zvp(k) * gg * rw * 0.001d0
-    c = cs ; phi = ps
+    c = cs(i,j) ; phi = ps(i,j)
   else
     a = zz(i,j)/zvp(k)
-    wij = (gs*a + gd*(1.d0-a)) * val
+    wij = (gs(i,j)*a + gd(i,j)*(1.d0-a)) * val
     uij = 0.d0
-    c = cd ; phi = pd
+    c = cd(i,j) ; phi = pd(i,j)
   end if
  
   do l = 1,4
