@@ -71,7 +71,7 @@ F= \frac{\sum_i\sum_j (\mathbf{t}_{ij}\times\mathbf{r}_b)\cdot\mathbf{v} [cA - \
   浸透解析結果(water_depth_level_××××.txt)の××××の数字の範囲を指定．  
 - **infsupdip.dat**  
   安全率の算出の対象とする斜面角の範囲
-- **parameter.dat**  
+- **parameter_slope.txt**  
   斜面安定解析のパラメータ   
   左から(初期の)粘着力，内部摩擦角，単位体積重量，(飽和時の)粘着力，内部摩擦角，単位体積重量    
 
@@ -100,7 +100,7 @@ F= \frac{\sum_i\sum_j (\mathbf{t}_{ij}\times\mathbf{r}_b)\cdot\mathbf{v} [cA - \
 
 **2. データの読み込み(subroutine datain)**  
 - 座標・地形データ(num_node.txt, coordinate.txt)
-- 土質パラメータ(parameter.dat)
+- 土質パラメータ(parameter_slope.txt)
 - 対象とする斜面の斜面角の範囲(inpsupdip.dat)
 
 **3. 斜面角度の算出と対象斜面の抽出 (subroutine angle)**  
