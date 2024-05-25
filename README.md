@@ -100,8 +100,9 @@ F= \frac{\sum_i\sum_j (\mathbf{t}_{ij}\times\mathbf{r}_b)\cdot\mathbf{v} [cA - \
 
 **2. データの読み込み(subroutine datain)**  
 - 座標・地形データ(num_node.txt, coordinate.txt)
-- 土質パラメータ(parameter_slope.txt)
+- 土質パラメータ(parameter_slope.txt)：パラメータごとの分類値
 - 対象とする斜面の斜面角の範囲(inpsupdip.dat)
+- 各地点・深さでの土質分類(category.txt)
 
 **3. 斜面角度の算出と対象斜面の抽出 (subroutine angle)**  
 - 各メッシュの斜面角度を算出
@@ -131,9 +132,11 @@ F= \frac{\sum_i\sum_j (\mathbf{t}_{ij}\times\mathbf{r}_b)\cdot\mathbf{v} [cA - \
 | 変数名     | 次元          |単位    | 説明                                   |   
 | :------:  | :----:        | :----: | :-------------                        |   
 | nx, ny    | -             | -      | x,y方向の節点数，途中から要素数を表現    |   
+| nz, nc    | -             | -      | z方向のパラメータの分割数, 土質分類数    |   
 | xx (yy)   | nx (ny)       | [m]   | x,y方向の節点座標                       |   
 | gl        | nx×ny         | [m]   | 節点の標高値の行列                      |   
 | dx, dy    | -             | [m]   | x,y方向の空間解像度                     |   
+| dz        | -             | [m]   | z方向の土質分類の分割幅                  |   
 | xxn (yyn) | nx-1 (ny-1)   | [m]   | x,y方向の要素中心の座標                  |   
 | gl        | (nx-1)×(ny-1) | [m]   | 要素中心の標高値の行列                   |   
 
@@ -144,9 +147,9 @@ F= \frac{\sum_i\sum_j (\mathbf{t}_{ij}\times\mathbf{r}_b)\cdot\mathbf{v} [cA - \
 
 | 変数名     | 次元   |単位      | 説明                           |   
 | :------:  | :----: | :----:   | :-------------                 |   
-| gd, gs    | -      | [kN/m^3] | 初期・飽和時の単位体積重量       |   
-| pd, ps    | -      | [°]      | 初期・飽和時の内部摩擦角         |   
-| cd, cs    | -      | [kPa]    | 初期・飽和時の粘着力            |   
+| gd, gs    | nc     | [kN/m^3] | 初期・飽和時の単位体積重量       |   
+| pd, ps    | nc     | [°]      | 初期・飽和時の内部摩擦角         |   
+| cd, cs    | nc     | [kPa]    | 初期・飽和時の粘着力            |   
 | sra       | 2      | [°]      | 斜面安定解析の対象とする傾斜角度  |   
 
 
