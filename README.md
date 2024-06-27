@@ -61,9 +61,16 @@ F= \frac{\sum_i\sum_j (\mathbf{t}_{ij}\times\mathbf{r}_b)\cdot\mathbf{v} [cA - \
 - **coordinate.txt**  
   座標データ．左の行からx座標，y座標，z座標
 - **num_node.txt**  
-  対象領域のx方向，y方向の節点数
+  1行目：x,y方向の節点数(nx,ny)   
+  2行目：深さ方向のパラメータのデータ数(nz)，その解像度(dz)   
+  3行目：土質分類数(nc)   
+- **category.txt**   
+  各位置(x,y,z)での土質分類番号が並ぶデータ．   
+  行方向に水平座標（x,y），列方向に各深さの分類が並ぶ形となる．   
+  要素値として読み込むので，データ数は(nx-1)×(ny-1)となる．
 
-上記の2つについては，[Infiltration_sflow](https://github.com/K-Tozato/infiltration_sflow)と同じ．   
+
+上記の3つについては，[Infiltration_sflow](https://github.com/K-Tozato/infiltration_sflow)と同じ．   
 
 
 - **gwater_case.txt**  
@@ -72,7 +79,7 @@ F= \frac{\sum_i\sum_j (\mathbf{t}_{ij}\times\mathbf{r}_b)\cdot\mathbf{v} [cA - \
 - **infsupdip.dat**  
   安全率の算出の対象とする斜面角の範囲
 - **parameter_slope.txt**  
-  斜面安定解析のパラメータ   
+  斜面安定解析のパラメータのリスト．各行にそれぞれの土質分類の値を格納．      
   左から(初期の)粘着力，内部摩擦角，単位体積重量，(飽和時の)粘着力，内部摩擦角，単位体積重量    
 
 
@@ -100,7 +107,7 @@ F= \frac{\sum_i\sum_j (\mathbf{t}_{ij}\times\mathbf{r}_b)\cdot\mathbf{v} [cA - \
 
 **2. データの読み込み(subroutine datain)**  
 - 座標・地形データ(num_node.txt, coordinate.txt)
-- 土質パラメータ(parameter_slope.txt)：パラメータごとの分類値
+- 土質パラメータ(parameter_slope.txt)：分類ごとのパラメータの値
 - 対象とする斜面の斜面角の範囲(inpsupdip.dat)
 - 各地点・深さでの土質分類(category.txt)
 
