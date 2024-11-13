@@ -87,7 +87,6 @@ F= \frac{\sum_i\sum_j (\mathbf{t}_{ij}\times\mathbf{r}_b)\cdot\mathbf{v} [cA - \
   0で地表面に水面，考慮しない場合は十分大きな値にする      
 - **base_layer.txt**  
   基盤面の深さのデータ．節点数（nx×ny）分のデータが並ぶ
-
   考慮しない場合は十分大きな値にする
 
 
