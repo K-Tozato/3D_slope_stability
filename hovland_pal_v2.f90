@@ -8,11 +8,11 @@ end module
 
 module inp_data
   double precision, allocatable :: gd(:), gs(:), pd(:) 
-  double precision, allocatable :: ps(:), cd(:), cs(:)
+  double precision, allocatable :: ps(:), cd(:), cs(:), c2(:)
   double precision, allocatable :: base(:,:), gwt(:,:)
-  integer, allocatable :: ctg(:,:,:)
-  double precision :: sra(2), k0
-  integer :: nc
+  integer, allocatable :: ctg(:,:,:), luse(:,:)
+  double precision :: sra(2), k0, rtd
+  integer :: nc, nlu
 end module
 
 module ssa
@@ -74,7 +74,7 @@ use ssa
 use inp_data 
 use solve_data
 implicit none
-integer :: i, j, k, l, nn, nbase, ngwt
+integer :: i, j, k, l, nn, nbase, ngwt, nluse
 double precision :: dum(2)
 double precision, parameter :: pi = 4.0d0*atan(1.d0)
 double precision, allocatable :: base0(:,:), gwt0(:,:)
@@ -83,20 +83,24 @@ open(11,file='./input/num_node.txt',status='old')
 read(11,*) nx, ny
 read(11,*) nz, dz
 read(11,*) nc, dum(1)
+read(11,*) nlu, rtd
 close(11) 
-allocate(xx(nx-1),yy(ny-1),gl(nx-1,ny-1),xxn(nx),yyn(ny),gln(nx,ny),ctg(nx-1,ny-1,nz))
+allocate(xx(nx-1),yy(ny-1),gl(nx-1,ny-1),xxn(nx),yyn(ny),gln(nx,ny))
+allocate(ctg(nx-1,ny-1,nz), luse(nx-1, ny-1))
 allocate(fs(nx-1,ny-1),zz(nx-1,ny-1),zvol(nx-1,ny-1))
-allocate(cd(nc), pd(nc), gd(nc), cs(nc), ps(nc), gs(nc))
+allocate(cd(nc), pd(nc), gd(nc), cs(nc), ps(nc), gs(nc),c2(nlu))
 allocate(base(nx-1, ny-1), base0(nx,ny), gwt(nx-1,ny-1), gwt0(nx,ny))
 fs(:,:) = 10.d0 ; zvol(:,:) = 0.d0 ; gwt(:,:) = 9999
 base(:,:) = dble(nz)*dz
 
 nbase = access("./input/base_layer.txt"," ")
 ngwt  = access("./input/groundwater.txt"," ")
+nluse = access("./input/landuse.txt"," ")
 open(11,file='./input/coordinate.txt',status='old')
 if(nbase==0) open(12,file='./input/base_layer.txt',status='old')
 if(ngwt==0 ) open(13,file='./input/groundwater.txt',status='old')
 open(14,file='./input/category.txt',status='old')
+if(nluse==0) open(15,file='./input/landuse.txt',status='old')
 nn = nx*ny
 i = 0  ; j = 1
 do k = 1,nn
@@ -105,6 +109,7 @@ do k = 1,nn
   if(nbase==0) read(12,*) base0(i,j)
   if(ngwt==0) read(13,*) gwt0(i,j)
   if(i<nx .and. j<ny) read(14,*) (ctg(i,j,l), l=1,nz)
+  if(i<nx .and. j<ny .and. nluse==0) read(15,*) luse(i,j)
   if(i .eq. nx) then
     i = 0 ; j = j + 1
   end if
@@ -112,6 +117,9 @@ end do
 close(11)
 if(nbase==0) close(12)
 if(ngwt==0 ) close(13)
+close(14)
+if(nluse==0) close(15)
+
 dx = xxn(2) - xxn(1) ; dy = yyn(2) - yyn(1)
 
 k0 = 0.d0
@@ -142,6 +150,14 @@ do i = 1,nc
 end do
 close(11)
 ps(:) = ps(:)/180.d0*pi ; pd(:) = pd(:)/180.d0*pi
+
+if(nluse == 0) then
+  open(11,file='./input/parameter_land.txt',status='old')
+  do i = 1, nlu
+    read(11,*) dum(1), c2(i)
+  end do
+  close(11)
+end if
 
 open(11,file='./input/infsupdip.dat',status='old')
 read(11,*) sra(1), sra(2)
@@ -311,7 +327,7 @@ open(11,file=fname, status='old')
 i = 0 ; j = 1
 do k = 1,(nx-1)*(ny-1)
   i = i + 1
-  read(11,*) ee(1), ee(2), zz(i,j), ee(3)
+  read(11,*) ee(1), ee(2), zz(i,j)!, ee(3)
   if(i == nx-1) then 
     i = 0 ; j = j + 1
   end if
@@ -392,7 +408,6 @@ do j = max(1,j1-int(pell(n1,1)/dy)-2), min(ny-1,j1+int(pell(n1,1)/dy)+2)
   end do
 end do
 
-
 !allocate(dbs(n0))
 !if(n0>=10) then
 !  dbs(:) = 1
@@ -403,7 +418,6 @@ end do
 ff = 0.d0 ; zvp = 0.d0
 do k = 1,n0
   if(ll>1 .or. n0<10) exit
-  !if(dbs(k)==0) cycle
   i = nep(k,1) ; j = nep(k,2)
   xp = 0.d0 ; yp = 0.d0 ; zp = 0.d0
   do l = 1, 4
@@ -454,7 +468,10 @@ do k = 1,n0
     endif
     wij = wij + a * b
   enddo
-   
+ 
+  if(rtd > zvp(k) .and. luse(i,j)>2) c = c + c2(luse(i,j))
+  if(luse(i,j)==2) c = c + c2(2)
+
   do l = 1,4
     zp(l) = - zp(l) + gln(i+posi(l,1),j+posi(l,2)) 
   end do
