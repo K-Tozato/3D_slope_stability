@@ -90,7 +90,7 @@ allocate(ctg(nx-1,ny-1,nz), luse(nx-1, ny-1))
 allocate(fs(nx-1,ny-1),zz(nx-1,ny-1),zvol(nx-1,ny-1))
 allocate(cd(nc), pd(nc), gd(nc), cs(nc), ps(nc), gs(nc),c2(nlu))
 allocate(base(nx-1, ny-1), base0(nx,ny), gwt(nx-1,ny-1), gwt0(nx,ny))
-fs(:,:) = 10.d0 ; zvol(:,:) = 0.d0 ; gwt(:,:) = 9999
+fs(:,:) = 10.d0 ; zvol(:,:) = 0.d0 ; gwt(:,:) = 9999 ; luse(:,:) = 0
 base(:,:) = dble(nz)*dz
 
 nbase = access("./input/base_layer.txt"," ")
@@ -537,10 +537,9 @@ end do
 
 if(k > 1) then
   fsp(1:n0) = ff(1)/ff(2)
-  !write(*,*) ff(1), ff(2)
   if(fsp(1)<0.d0 .and. ff(1)<0.d0) fsp(1:n0) = 0.d0
   if(fsp(1)<0.d0 .and. ff(2)<0.d0) fsp(1:n0) = 10.d0
-  !if(fsp(1) > 1.d0) zvp(:) = 0.d0
+  if(fsp(1) > 1.d0) zvp(:) = 0.d0
 end if
 
 do k = 1,n0
